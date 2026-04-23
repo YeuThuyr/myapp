@@ -1,14 +1,16 @@
 <?php
 $errors = [];
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
+    // 1. Get data
     $fullname = trim($_POST["fullname"]);
     $username = trim($_POST["username"]);
     $email = trim($_POST["email"]);
     $password = $_POST["password"];
     $confirm_password = $_POST["confirm_password"];
 
+    // 2. Validate
     if ($password !== $confirm_password) {
         $errors[] = "Passwords do not match!";
     }
@@ -21,16 +23,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $errors[] = "Invalid email format.";
     }
 
+    // 3. ONLY connect if no validation errors
     if (empty($errors)) {
-        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-        $conn = new mysqli("localhost", "root", "", "your_database");
+        $conn = new mysqli("localhost", "myapp_user", "your_password", "grade_management");
 
         if ($conn->connect_error) {
             die("Connection failed: " . $conn->connect_error);
         }
 
-        $stmt = $conn->prepare("INSERT INTO users (fullname, username, email, password) VALUES (?, ?, ?, ?)");
+        // 4. Hash password
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+        // 5. Insert
+        $stmt = $conn->prepare(
+            "INSERT INTO users (fullname, username, email, password) VALUES (?, ?, ?, ?)"
+        );
+
         $stmt->bind_param("ssss", $fullname, $username, $email, $hashed_password);
 
         if ($stmt->execute()) {
