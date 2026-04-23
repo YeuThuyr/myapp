@@ -26,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // 3. ONLY connect if no validation errors
     if (empty($errors)) {
 
-        $conn = new mysqli("localhost", "myapp_user", "your_password", "grade_management");
+        $conn = new mysqli("localhost", "myapp_user", "your_strong_password", "grade_management");
 
         if ($conn->connect_error) {
             die("Connection failed: " . $conn->connect_error);
