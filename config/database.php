@@ -2,8 +2,8 @@
 
 $host = "localhost";
 $dbname = "grade_management";
-$dbUsername = "root";
-$dbPassword = "";
+$dbUsername = "myapp_user";
+$dbPassword = "your_strong_password";
 
 $conn = new mysqli($host, $dbUsername, $dbPassword, $dbname);
 
