@@ -1,29 +1,14 @@
 <?php
 session_start();
+require_once __DIR__ . '/config/database.php';
 
 $error = "";
-$success = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    // Get data from form
-    $inputUsername = $_POST['username'] ?? '';
-    $inputPassword = $_POST['password'] ?? '';
+    $inputUsername = $_POST['username'];
+    $inputPassword = $_POST['password'];
 
-    // Database credentials
-    $servername = "192.168.146.133";
-    $dbUsername = "root";
-    $dbPassword = "";
-    $dbname = "grade_management";
-
-    // Connect to MySQL
-    $conn = new mysqli($servername, $dbUsername, $dbPassword, $dbname);
-
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
-
-    // Fetch user from database
     $stmt = $conn->prepare(
         "SELECT id, username, password FROM account WHERE username = ? LIMIT 1"
     );
@@ -34,19 +19,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $result = $stmt->get_result();
     $row = $result->fetch_assoc();
 
-    // For hashed passwords
     if ($row && password_verify($inputPassword, $row['password'])) {
+
         $_SESSION['user_id'] = $row['id'];
         $_SESSION['username'] = $row['username'];
 
-        header("Location: index.php");
+        header("Location: index.php"); // redirect homepage
         exit();
+
     } else {
-        $error = "Invalid username or password.";
+        $error = "Invalid username or password";
     }
 
     $stmt->close();
-    $conn->close();
 }
 ?>
 
@@ -57,23 +42,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
 
-    <h2>Login</h2>
+<h2>Login</h2>
 
-    <?php if ($error !== ""): ?>
-        <p style="color: red;">
-            <?php echo htmlspecialchars($error); ?>
-        </p>
-    <?php endif; ?>
+<?php if ($error): ?>
+    <p style="color:red;"><?php echo htmlspecialchars($error); ?></p>
+<?php endif; ?>
 
-    <form method="POST" action="">
-        <label>Username:</label><br>
-        <input type="text" name="username" required><br><br>
-
-        <label>Password:</label><br>
-        <input type="password" name="password" required><br><br>
-
-        <button type="submit">Login</button>
-    </form>
+<form method="POST">
+    <input type="text" name="username" placeholder="Username" required><br><br>
+    <input type="password" name="password" placeholder="Password" required><br><br>
+    <button type="submit">Login</button>
+</form>
 
 </body>
 </html>
