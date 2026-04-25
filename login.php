@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $inputPassword = $_POST['password'] ?? '';
 
         $stmt = $conn->prepare(
-            "SELECT id, username, password FROM account WHERE username = ? LIMIT 1"
+            "SELECT id, username, password FROM users WHERE username = ? LIMIT 1"
         );
 
         $stmt->bind_param("s", $inputUsername);
