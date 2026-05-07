@@ -1,13 +1,11 @@
 <?php
 session_start();
 
-// If not logged in → redirect to login
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
 
-// Determine active page for nav highlight
 $currentPage = basename($_SERVER['PHP_SELF']);
 ?>
 
@@ -16,8 +14,8 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Home — CS-ClassB</title>
-  <meta name="description" content="Welcome to CS-ClassB dashboard" />
+  <title>Settings — CS-ClassB</title>
+  <meta name="description" content="Manage your CS-ClassB settings" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -69,41 +67,53 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 
   <!-- ── Page Content ── -->
   <main class="page-content">
-    <div class="home-hero">
-      <div class="greeting-emoji">👋</div>
-      <h1>Welcome back, <?php echo htmlspecialchars($_SESSION['username']); ?>!</h1>
-      <p>Here's your dashboard. Choose where you'd like to go.</p>
-    </div>
+    <div class="simple-page" style="animation: fadeInUp 0.5s ease;">
 
-    <div class="home-cards">
-      <a href="profile.php" class="home-card">
-        <div class="card-icon">👤</div>
-        <h3>My Profile</h3>
-        <p>View and manage your personal information</p>
-      </a>
+      <h1>⚙️ Settings</h1>
+      <p class="subtitle">Manage your account preferences and configurations.</p>
 
-      <a href="description.php" class="home-card">
-        <div class="card-icon">✏️</div>
-        <h3>Edit Description</h3>
-        <p>Update your bio and description</p>
-      </a>
+      <div class="card" style="margin-bottom: 20px;">
+        <div class="settings-section">
+          <h3>Account</h3>
+          <div class="info-row">
+            <span class="info-label">Username</span>
+            <span class="info-value"><?php echo htmlspecialchars($_SESSION['username']); ?></span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Session ID</span>
+            <span class="info-value masked"><?php echo substr(session_id(), 0, 8) . '••••'; ?></span>
+          </div>
+        </div>
+      </div>
 
-      <a href="settings.php" class="home-card">
-        <div class="card-icon">⚙️</div>
-        <h3>Settings</h3>
-        <p>Configure your account preferences</p>
-      </a>
+      <div class="card" style="margin-bottom: 20px;">
+        <div class="settings-section">
+          <h3>Quick Actions</h3>
+          <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:12px;">
+            <a href="profile.php" class="btn btn-secondary">👤 Edit Profile</a>
+            <a href="description.php" class="btn btn-secondary">✏️ Edit Description</a>
+          </div>
+        </div>
+      </div>
 
-      <a href="about.php" class="home-card">
-        <div class="card-icon">ℹ️</div>
-        <h3>About</h3>
-        <p>Learn more about this application</p>
-      </a>
+      <div class="card">
+        <div class="settings-section">
+          <h3>Danger Zone</h3>
+          <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 16px;">
+            Signing out will end your current session.
+          </p>
+          <form method="POST" action="logout.php">
+            <button type="submit" class="btn" style="background: rgba(255,107,107,0.12); color: var(--danger); border: 1px solid rgba(255,107,107,0.25);">
+              ↗ Sign Out
+            </button>
+          </form>
+        </div>
+      </div>
+
     </div>
   </main>
 
   <script>
-    // Navbar scroll effect
     window.addEventListener('scroll', () => {
       document.getElementById('main-navbar')
         .classList.toggle('scrolled', window.scrollY > 10);

@@ -44,23 +44,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Login</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In — CS-ClassB</title>
+  <meta name="description" content="Sign in to your CS-ClassB account" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<h2>Login</h2>
+  <div class="auth-wrapper">
+    <div class="card auth-card">
 
-<?php if ($error): ?>
-    <p style="color:red;"><?php echo htmlspecialchars($error); ?></p>
-<?php endif; ?>
+      <div class="auth-header">
+        <div class="auth-icon">🔐</div>
+        <h2>Welcome Back</h2>
+        <p>Sign in to continue to CS-ClassB</p>
+      </div>
 
-<form method="POST">
-    <input type="text" name="username" placeholder="Username" required><br><br>
-    <input type="password" name="password" placeholder="Password" required><br><br>
-    <button type="submit">Login</button>
-</form>
+      <?php if ($error): ?>
+        <div class="alert alert-error">
+          <span>⚠️</span> <?php echo htmlspecialchars($error); ?>
+        </div>
+      <?php endif; ?>
+
+      <form method="POST">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" placeholder="Enter your username" required />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Enter your password" required />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Sign In</button>
+      </form>
+
+      <div class="auth-footer">
+        Don't have an account? <a href="register.php">Create one</a>
+      </div>
+
+    </div>
+  </div>
 
 </body>
 </html>
