@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS account (
 -- (for existing databases that lack this column)
 -- ============================================
 -- If you get "Duplicate column name" that is harmless.
-ALTER TABLE account ADD COLUMN description TEXT DEFAULT NULL;
+-- ALTER TABLE account ADD COLUMN description TEXT DEFAULT NULL;
 
 -- ============================================
 -- Sample users (all passwords: password123)
