@@ -10,14 +10,21 @@ if (!isset($_SESSION['user_id'])) {
 
 // Fetch all users
 $users = [];
-$stmt = $conn->prepare("SELECT id, fullname, username, email, description FROM users ORDER BY id ASC");
-if ($stmt) {
-    $stmt->execute();
-    $result = $stmt->get_result();
-    while ($row = $result->fetch_assoc()) {
-        $users[] = $row;
+$dbError = null;
+try {
+    $stmt = $conn->prepare("SELECT id, fullname, username, email, description FROM users ORDER BY id ASC");
+    if ($stmt) {
+        $stmt->execute();
+        $result = $stmt->get_result();
+        while ($row = $result->fetch_assoc()) {
+            $users[] = $row;
+        }
+        $stmt->close();
+    } else {
+        $dbError = $conn->error;
     }
-    $stmt->close();
+} catch (Exception $e) {
+    $dbError = $e->getMessage();
 }
 
 // Determine active page for nav highlight
@@ -92,6 +99,12 @@ $currentPage = basename($_SERVER['PHP_SELF']);
           Total Users: <?php echo count($users); ?>
         </div>
       </div>
+
+      <?php if (!empty($dbError)): ?>
+        <div class="alert alert-error" style="margin-bottom: 24px;">
+          <span>⚠️</span> Error fetching users: <?php echo htmlspecialchars($dbError); ?>
+        </div>
+      <?php endif; ?>
 
       <div class="table-responsive">
         <table class="data-table">
