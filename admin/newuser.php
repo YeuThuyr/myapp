@@ -4,7 +4,7 @@
  * URL: /admin/newuser.php
  */
 
-require_once __DIR__ . '/../socialnet/includes/db.php';
+require_once __DIR__ . '/../includes/db.php';
 
 $errors  = [];
 $success = "";
@@ -103,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </form>
 
       <div class="auth-footer">
-        <a href="../socialnet/signin.php">← Go to Sign In</a>
+        <a href="../signin.php">← Go to Sign In</a>
       </div>
 
     </div>

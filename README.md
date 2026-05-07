@@ -83,13 +83,13 @@ sudo chmod -R 755 /var/www/html/
 | Page         | URL                                      | Description                          |
 |-------------|------------------------------------------|--------------------------------------|
 | Admin        | `/admin/newuser.php`                     | Create a new user account            |
-| Sign In      | `/socialnet/signin.php`                  | Login with username & password       |
-| Home         | `/socialnet/index.php`                   | User directory (requires login)      |
-| Setting      | `/socialnet/setting.php`                 | Edit profile description             |
-| Profile      | `/socialnet/profile.php`                 | View own profile                     |
-| Profile      | `/socialnet/profile.php?owner=username`  | View another user's profile          |
-| About        | `/socialnet/about.php`                   | Student info & project details       |
-| Sign Out     | `/socialnet/signout.php`                 | End session & redirect to sign in    |
+| Sign In      | `/signin.php`                            | Login with username & password       |
+| Home         | `/index.php`                             | User directory (requires login)      |
+| Setting      | `/setting.php`                           | Edit profile description             |
+| Profile      | `/profile.php`                           | View own profile                     |
+| Profile      | `/profile.php?owner=username`            | View another user's profile          |
+| About        | `/about.php`                             | Student info & project details       |
+| Sign Out     | `/signout.php`                           | End session & redirect to sign in    |
 
 ## Sample Accounts
 
@@ -105,17 +105,16 @@ sudo chmod -R 755 /var/www/html/
 project-root/
 ├── admin/
 │   └── newuser.php           # Admin: create new users
-├── socialnet/
-│   ├── index.php             # Home page (user list)
-│   ├── signin.php            # Sign in page
-│   ├── signout.php           # Sign out (destroys session)
-│   ├── setting.php           # Edit profile description
-│   ├── profile.php           # View profile (?owner=username)
-│   ├── about.php             # Static about page
-│   └── includes/
-│       ├── db.php            # Database connection
-│       ├── auth.php          # Authentication helper
-│       └── menubar.php       # Shared navigation bar
+├── includes/
+│   ├── db.php                # Database connection
+│   ├── auth.php              # Authentication helper
+│   └── menubar.php           # Shared navigation bar
+├── index.php                 # Home page (user list)
+├── signin.php                # Sign in page
+├── signout.php               # Sign out (destroys session)
+├── setting.php               # Edit profile description
+├── profile.php               # View profile (?owner=username)
+├── about.php                 # Static about page
 ├── style.css                 # Global CSS
 ├── db.sql                    # Database schema + sample data
 └── README.md                 # This file
