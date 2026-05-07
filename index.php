@@ -1,10 +1,23 @@
 <?php
 session_start();
+require_once __DIR__ . '/config/database.php';
 
 // If not logged in → redirect to login
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
+}
+
+// Fetch all users
+$users = [];
+$stmt = $conn->prepare("SELECT id, fullname, username, email, description FROM users ORDER BY id ASC");
+if ($stmt) {
+    $stmt->execute();
+    $result = $stmt->get_result();
+    while ($row = $result->fetch_assoc()) {
+        $users[] = $row;
+    }
+    $stmt->close();
 }
 
 // Determine active page for nav highlight
@@ -69,36 +82,75 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 
   <!-- ── Page Content ── -->
   <main class="page-content">
-    <div class="home-hero">
-      <div class="greeting-emoji">👋</div>
-      <h1>Welcome back, <?php echo htmlspecialchars($_SESSION['username']); ?>!</h1>
-      <p>Here's your dashboard. Choose where you'd like to go.</p>
-    </div>
+    <div class="card card-wide" style="animation: fadeInUp 0.5s ease;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <div>
+          <h2 style="font-size: 24px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">User Directory</h2>
+          <p style="color: var(--text-muted); font-size: 14px;">A list of all users registered in CS-ClassB.</p>
+        </div>
+        <div style="background: var(--surface-hover); padding: 8px 16px; border-radius: var(--radius-xl); font-size: 14px; font-weight: 600; color: var(--primary-light);">
+          Total Users: <?php echo count($users); ?>
+        </div>
+      </div>
 
-    <div class="home-cards">
-      <a href="profile.php" class="home-card">
-        <div class="card-icon">👤</div>
-        <h3>My Profile</h3>
-        <p>View and manage your personal information</p>
-      </a>
-
-      <a href="description.php" class="home-card">
-        <div class="card-icon">✏️</div>
-        <h3>Edit Description</h3>
-        <p>Update your bio and description</p>
-      </a>
-
-      <a href="settings.php" class="home-card">
-        <div class="card-icon">⚙️</div>
-        <h3>Settings</h3>
-        <p>Configure your account preferences</p>
-      </a>
-
-      <a href="about.php" class="home-card">
-        <div class="card-icon">ℹ️</div>
-        <h3>About</h3>
-        <p>Learn more about this application</p>
-      </a>
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>User</th>
+              <th>Email</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php foreach ($users as $u): ?>
+              <tr>
+                <td class="muted">#<?php echo htmlspecialchars($u['id']); ?></td>
+                <td>
+                  <div class="user-cell">
+                    <div class="user-cell-avatar">
+                      <?php echo strtoupper(substr($u['username'] ?? '?', 0, 1)); ?>
+                    </div>
+                    <div class="user-cell-info">
+                      <span class="user-cell-name"><?php echo htmlspecialchars($u['fullname'] ?: $u['username']); ?></span>
+                      <span class="user-cell-username">@<?php echo htmlspecialchars($u['username']); ?></span>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <?php
+                    $email = $u['email'];
+                    if (empty($email)) {
+                        echo '<span class="muted">—</span>';
+                    } else {
+                        echo htmlspecialchars($email);
+                    }
+                  ?>
+                </td>
+                <td>
+                  <?php
+                    $desc = $u['description'];
+                    if (empty($desc)) {
+                        echo '<span class="muted" style="font-style:italic;">No description</span>';
+                    } else {
+                        $shortDesc = strlen($desc) > 50 ? substr($desc, 0, 47) . '...' : $desc;
+                        echo htmlspecialchars($shortDesc);
+                    }
+                  ?>
+                </td>
+              </tr>
+            <?php endforeach; ?>
+            <?php if (empty($users)): ?>
+              <tr>
+                <td colspan="4" style="text-align: center; padding: 32px; color: var(--text-muted);">
+                  No users found in the database.
+                </td>
+              </tr>
+            <?php endif; ?>
+          </tbody>
+        </table>
+      </div>
     </div>
   </main>
 
