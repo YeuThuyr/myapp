@@ -12,7 +12,7 @@ error_reporting(E_ALL);
 $db_host = "localhost";
 $db_name = "socialnet";
 $db_user = "root";
-$db_pass = "";
+$db_pass = "123456";
 
 try {
     $conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
