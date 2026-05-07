@@ -11,7 +11,7 @@ error_reporting(E_ALL);
 
 $db_host = "localhost";
 $db_name = "socialnet";
-$db_user = "myapp_user";
+$db_user = "root";
 $db_pass = "your_strong_password";
 
 try {
