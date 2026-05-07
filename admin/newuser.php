@@ -28,20 +28,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Insert if valid
     if (empty($errors)) {
-        $hashed = password_hash($password, PASSWORD_DEFAULT);
-        $desc   = $description !== '' ? $description : null;
+        try {
+            $hashed = password_hash($password, PASSWORD_DEFAULT);
+            $desc   = $description !== '' ? $description : null;
 
-        $stmt = $conn->prepare(
-            "INSERT INTO account (username, fullname, password, description) VALUES (?, ?, ?, ?)"
-        );
-        $stmt->bind_param("ssss", $username, $fullname, $hashed, $desc);
+            $stmt = $conn->prepare(
+                "INSERT INTO account (username, fullname, password, description) VALUES (?, ?, ?, ?)"
+            );
+            $stmt->bind_param("ssss", $username, $fullname, $hashed, $desc);
 
-        if ($stmt->execute()) {
-            $success = "User \"" . htmlspecialchars($username) . "\" created successfully!";
-        } else {
-            $errors[] = "Username already exists.";
+            if ($stmt->execute()) {
+                $success = "User \"" . htmlspecialchars($username) . "\" created successfully!";
+            } else {
+                $errors[] = "Username already exists.";
+            }
+            $stmt->close();
+        } catch (Exception $e) {
+            $errors[] = "Database error: " . $e->getMessage();
         }
-        $stmt->close();
     }
 }
 ?>

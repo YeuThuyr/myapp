@@ -13,30 +13,39 @@ require_once __DIR__ . '/includes/db.php';
 
 $success = "";
 $error   = "";
+$currentDescription = "";
 
 // Fetch current description
-$stmt = $conn->prepare("SELECT description FROM account WHERE id = ? LIMIT 1");
-$stmt->bind_param("i", $_SESSION['user_id']);
-$stmt->execute();
-$result = $stmt->get_result();
-$row = $result->fetch_assoc();
-$currentDescription = $row['description'] ?? '';
-$stmt->close();
+try {
+    $stmt = $conn->prepare("SELECT description FROM account WHERE id = ? LIMIT 1");
+    $stmt->bind_param("i", $_SESSION['user_id']);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    $currentDescription = $row['description'] ?? '';
+    $stmt->close();
+} catch (Exception $e) {
+    $error = "Database error: " . $e->getMessage();
+}
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $description = trim($_POST['description'] ?? '');
+    try {
+        $description = trim($_POST['description'] ?? '');
 
-    $stmt = $conn->prepare("UPDATE account SET description = ? WHERE id = ?");
-    $stmt->bind_param("si", $description, $_SESSION['user_id']);
+        $stmt = $conn->prepare("UPDATE account SET description = ? WHERE id = ?");
+        $stmt->bind_param("si", $description, $_SESSION['user_id']);
 
-    if ($stmt->execute()) {
-        $currentDescription = $description;
-        $success = "Description updated successfully!";
-    } else {
-        $error = "Failed to update description.";
+        if ($stmt->execute()) {
+            $currentDescription = $description;
+            $success = "Description updated successfully!";
+        } else {
+            $error = "Failed to update description.";
+        }
+        $stmt->close();
+    } catch (Exception $e) {
+        $error = "Database error: " . $e->getMessage();
     }
-    $stmt->close();
 }
 ?>
 <!DOCTYPE html>

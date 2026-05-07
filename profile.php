@@ -15,35 +15,40 @@ require_once __DIR__ . '/includes/db.php';
 
 $isOwnProfile = true;
 $profileUser  = null;
+$dbError      = null;
 
-if (isset($_GET['owner']) && trim($_GET['owner']) !== '') {
-    // Show another user's profile
-    $ownerUsername = trim($_GET['owner']);
+try {
+    if (isset($_GET['owner']) && trim($_GET['owner']) !== '') {
+        // Show another user's profile
+        $ownerUsername = trim($_GET['owner']);
 
-    $stmt = $conn->prepare(
-        "SELECT id, username, fullname, description FROM account WHERE username = ? LIMIT 1"
-    );
-    $stmt->bind_param("s", $ownerUsername);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $profileUser = $result->fetch_assoc();
-    $stmt->close();
+        $stmt = $conn->prepare(
+            "SELECT id, username, fullname, description FROM account WHERE username = ? LIMIT 1"
+        );
+        $stmt->bind_param("s", $ownerUsername);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $profileUser = $result->fetch_assoc();
+        $stmt->close();
 
-    if (!$profileUser) {
-        $notFound = true;
+        if (!$profileUser) {
+            $notFound = true;
+        } else {
+            $isOwnProfile = ($profileUser['id'] == $_SESSION['user_id']);
+        }
     } else {
-        $isOwnProfile = ($profileUser['id'] == $_SESSION['user_id']);
+        // Show own profile
+        $stmt = $conn->prepare(
+            "SELECT id, username, fullname, description FROM account WHERE id = ? LIMIT 1"
+        );
+        $stmt->bind_param("i", $_SESSION['user_id']);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $profileUser = $result->fetch_assoc();
+        $stmt->close();
     }
-} else {
-    // Show own profile
-    $stmt = $conn->prepare(
-        "SELECT id, username, fullname, description FROM account WHERE id = ? LIMIT 1"
-    );
-    $stmt->bind_param("i", $_SESSION['user_id']);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $profileUser = $result->fetch_assoc();
-    $stmt->close();
+} catch (Exception $e) {
+    $dbError = $e->getMessage();
 }
 ?>
 <!DOCTYPE html>

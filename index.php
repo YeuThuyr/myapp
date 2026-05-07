@@ -13,16 +13,20 @@ require_once __DIR__ . '/includes/db.php';
 
 // Fetch all other users
 $others = [];
-$stmt = $conn->prepare(
-    "SELECT id, username, fullname FROM account WHERE id != ? ORDER BY id ASC"
-);
-$stmt->bind_param("i", $_SESSION['user_id']);
-$stmt->execute();
-$result = $stmt->get_result();
-while ($row = $result->fetch_assoc()) {
-    $others[] = $row;
+try {
+    $stmt = $conn->prepare(
+        "SELECT id, username, fullname FROM account WHERE id != ? ORDER BY id ASC"
+    );
+    $stmt->bind_param("i", $_SESSION['user_id']);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    while ($row = $result->fetch_assoc()) {
+        $others[] = $row;
+    }
+    $stmt->close();
+} catch (Exception $e) {
+    // Query failed — $others stays empty
 }
-$stmt->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
