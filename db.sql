@@ -9,6 +9,13 @@ CREATE DATABASE IF NOT EXISTS socialnet
 
 USE socialnet;
 
+-- Create database user and grant privileges
+CREATE USER IF NOT EXISTS 'socialnet_user'@'localhost' IDENTIFIED BY '123456';
+-- In case the user already exists, let's also alter the password to ensure it is '123456'
+ALTER USER 'socialnet_user'@'localhost' IDENTIFIED BY '123456';
+GRANT ALL PRIVILEGES ON socialnet.* TO 'socialnet_user'@'localhost';
+FLUSH PRIVILEGES;
+
 -- Create the account table
 CREATE TABLE IF NOT EXISTS account (
   id          INT AUTO_INCREMENT PRIMARY KEY,
@@ -19,18 +26,24 @@ CREATE TABLE IF NOT EXISTS account (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ============================================
--- Safety: add 'description' column if missing
--- (for existing databases that lack this column)
--- ============================================
--- If you get "Duplicate column name" that is harmless.
--- ALTER TABLE account ADD COLUMN description TEXT DEFAULT NULL;
-
--- ============================================
 -- Sample users (all passwords: password123)
 -- ============================================
 -- Passwords are hashed with password_hash('password123', PASSWORD_DEFAULT)
 
-INSERT INTO account (username, fullname, password, description) VALUES
+INSERT IGNORE INTO account (username, fullname, password, description) VALUES
   ('admin',   'Administrator',  '$2y$10$1zpY7M/XrERFM41h24NFKevHPbwhzeKUWqjke70LAAPVQ82APL80y', 'System administrator'),
   ('alice',   'Alice Nguyen',   '$2y$10$1zpY7M/XrERFM41h24NFKevHPbwhzeKUWqjke70LAAPVQ82APL80y', 'Hello! I am Alice.'),
   ('bob',     'Bob Tran',       '$2y$10$1zpY7M/XrERFM41h24NFKevHPbwhzeKUWqjke70LAAPVQ82APL80y', NULL);
+
+-- ============================================
+-- Create the friendship table
+-- ============================================
+CREATE TABLE IF NOT EXISTS friendship (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  sender_id INT NOT NULL,
+  receiver_id INT NOT NULL,
+  status ENUM('pending', 'accepted') NOT NULL DEFAULT 'pending',
+  UNIQUE KEY unique_friendship (sender_id, receiver_id),
+  FOREIGN KEY (sender_id) REFERENCES account(id) ON DELETE CASCADE,
+  FOREIGN KEY (receiver_id) REFERENCES account(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

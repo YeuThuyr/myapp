@@ -1,57 +1,81 @@
-# CS-ClassB
+# SocialNet (MockProjectSocial)
 
-A simple web application built with PHP, MySQL, Nginx, and Linux. Features user account management, profiles, and a modern glassmorphism UI.
+A web-based social network mock project built with PHP, MySQL, Nginx, and Linux. This application features user authentication, a profile directory, editable user descriptions, and a modern glassmorphism UI.
 
-## Tech Stack
+## ✨ Features
 
-| Component    | Technology       |
-|-------------|-----------------|
-| Backend     | PHP 8.x         |
-| Database    | MySQL / MariaDB  |
-| Web Server  | Nginx            |
-| OS          | Linux            |
+- **Secure Authentication:** User login and registration with hashed passwords (bcrypt).
+- **User Directory:** A homepage listing all registered users in the system.
+- **Profiles:** Individual user profile pages displaying their information and descriptions.
+- **Profile Settings:** Users can edit their own profile descriptions.
+- **Admin Panel:** Special page for creating new user accounts.
+- **Modern UI:** Glassmorphism design, responsive layouts, and smooth animations.
 
-## Setup Instructions
+## 🛠️ Tech Stack
 
-### 1. MySQL Database
+- **Backend:** PHP 8.x
+- **Database:** MySQL / MariaDB
+- **Web Server:** Nginx
+- **OS:** Linux (Ubuntu/Debian recommended)
 
-Import the database schema:
+## 🚀 Setup & Installation Guide
 
-```bash
-mysql -u root -p < db.sql
-```
+Follow these steps to get the application running smoothly on your server.
 
-This will:
-- Create the `socialnet` database
-- Create the `account` table
-- Insert 3 sample users (all passwords: `password123`)
+### 1. Prerequisites
 
-#### Grant permissions to the app user:
-
-```sql
-CREATE USER 'myapp_user'@'localhost' IDENTIFIED BY 'your_strong_password';
-GRANT ALL PRIVILEGES ON socialnet.* TO 'myapp_user'@'localhost';
-FLUSH PRIVILEGES;
-```
-
-### 2. PHP
-
-Ensure PHP 8.x and `php-fpm` are installed with the `mysqli` extension:
+Ensure you have Nginx, PHP, and MySQL installed on your system:
 
 ```bash
-sudo apt install php-fpm php-mysql
+sudo apt update
+sudo apt install nginx mysql-server php-fpm php-mysql
 ```
 
-### 3. Nginx Configuration
+### 2. Deploy Project Files
 
-Example Nginx server block:
+Clone the repository directly into the root directory (`/`). You can use either HTTPS or SSH:
+
+**Option A: Using HTTPS**
+```bash
+cd /
+sudo git clone https://github.com/YeuThuyr/myapp.git
+```
+
+**Option B: Using SSH**
+```bash
+cd /
+sudo git clone git@github.com:YeuThuyr/myapp.git
+```
+
+Set the correct file permissions so Nginx can serve the files:
+
+```bash
+sudo chown -R www-data:www-data /myapp
+sudo chmod -R 755 /myapp
+```
+
+### 3. Setup the Database
+
+We have provided a fully automated database script. It will create the database, the required tables, a dedicated application database user (`socialnet_user`), and populate the app with sample data.
+
+Run the following command in your terminal (you may need `sudo` or to provide your MySQL root password):
+
+```bash
+sudo mysql < db.sql
+```
+*(No manual user creation or privilege granting is required!)*
+
+### 4. Configure Nginx
+
+Create a new Nginx server block or update your default one. Here is an example configuration for `/etc/nginx/sites-available/myapp`:
 
 ```nginx
 server {
     listen 80;
-    server_name your-domain.com;
+    server_name localhost; # Change to your domain or IP
 
-    root /var/www/html;
+    # Set the root to / so the app is accessed at /myapp
+    root /;
     index index.php index.html;
 
     location / {
@@ -60,79 +84,61 @@ server {
 
     location ~ \.php$ {
         include snippets/fastcgi-php.conf;
+        # Adjust the PHP version below if you are not using 8.3
         fastcgi_pass unix:/run/php/php8.3-fpm.sock;
     }
 
+    # Deny access to hidden files like .htaccess
     location ~ /\.ht {
         deny all;
     }
 }
 ```
 
-Deploy the project files to `/var/www/html/` (or your chosen web root).
-
-### 4. File Permissions
+Enable the configuration and restart Nginx:
 
 ```bash
-sudo chown -R www-data:www-data /var/www/html/
-sudo chmod -R 755 /var/www/html/
+sudo ln -s /etc/nginx/sites-available/myapp /etc/nginx/sites-enabled/
+sudo systemctl restart nginx
 ```
 
-## Page URLs
+---
 
-| Page         | URL                                      | Description                          |
-|-------------|------------------------------------------|--------------------------------------|
-| Admin        | `/admin/newuser.php`                     | Create a new user account            |
-| Sign In      | `/signin.php`                            | Login with username & password       |
-| Home         | `/index.php`                             | User directory (requires login)      |
-| Setting      | `/setting.php`                           | Edit profile description             |
-| Profile      | `/profile.php`                           | View own profile                     |
-| Profile      | `/profile.php?owner=username`            | View another user's profile          |
-| About        | `/about.php`                             | Student info & project details       |
-| Sign Out     | `/signout.php`                           | End session & redirect to sign in    |
+## 🔑 Sample Accounts
 
-## Sample Accounts
+After setting up the database, you can immediately log in using any of the following pre-created accounts:
 
-| Username | Password      | Full Name       |
-|----------|--------------|-----------------|
-| admin    | password123  | Administrator   |
-| alice    | password123  | Alice Nguyen    |
-| bob      | password123  | Bob Tran        |
+| Username | Password      | Role                  |
+|----------|--------------|-----------------------|
+| `admin`  | `password123` | System Administrator  |
+| `alice`  | `password123` | Standard User         |
+| `bob`    | `password123` | Standard User         |
 
-## Project Structure
+---
 
-```
-project-root/
+## 📂 Project Structure
+
+```text
+/
 ├── admin/
-│   └── newuser.php           # Admin: create new users
+│   └── newuser.php           # Admin panel to create users
 ├── includes/
-│   ├── db.php                # Database connection
-│   ├── auth.php              # Authentication helper
-│   └── menubar.php           # Shared navigation bar
-├── index.php                 # Home page (user list)
-├── signin.php                # Sign in page
-├── signout.php               # Sign out (destroys session)
-├── setting.php               # Edit profile description
-├── profile.php               # View profile (?owner=username)
-├── about.php                 # Static about page
-├── style.css                 # Global CSS
-├── db.sql                    # Database schema + sample data
-└── README.md                 # This file
+│   ├── auth.php              # Authentication and session logic
+│   ├── db.php                # Database connection credentials
+│   └── menubar.php           # Global navigation component
+├── about.php                 # Static project information
+├── db.sql                    # Automated DB schema & setup script
+├── index.php                 # Homepage (User directory)
+├── profile.php               # User profile viewing page
+├── setting.php               # Profile editing page
+├── signin.php                # Login page
+├── signout.php               # Logout logic
+├── style.css                 # Global stylesheets (Glassmorphism)
+└── README.md                 # Project documentation
 ```
 
-## Security Features
-
-- Passwords hashed with `password_hash()` (bcrypt)
-- Login verified with `password_verify()`
-- Prepared statements for all SQL queries
-- Output escaped with `htmlspecialchars()` to prevent XSS
-- Session-based authentication on all protected pages
-- Unauthenticated users redirected to sign-in page
-
-## Extra Features
-
-- **Glassmorphism UI** — Modern dark theme with blur effects, gradients, and smooth animations
-- **Responsive Design** — Works on desktop and mobile devices
-- **Shared MenuBar** — Consistent navigation across all protected pages with active page highlighting
-- **User Avatars** — Auto-generated initials-based avatars
-- **Profile Linking** — Users can view each other's profiles via `?owner=username`
+## 🛡️ Security Notes
+- Passwords are encrypted using PHP's native `password_hash()`.
+- SQL injection is prevented by exclusively using Prepared Statements (`mysqli_stmt`) for all database interactions.
+- Cross-Site Scripting (XSS) is mitigated by using `htmlspecialchars()` when displaying user-generated content.
+- Unauthenticated access to private pages automatically redirects users to `signin.php`.
