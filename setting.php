@@ -30,6 +30,7 @@ try {
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    verifyCsrfToken();
     try {
         $description = trim($_POST['description'] ?? '');
 
@@ -82,6 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <?php endif; ?>
 
       <form method="POST" action="">
+        <?php echo getCsrfField(); ?>
         <div class="form-group">
           <label for="description">Your Description</label>
           <textarea id="description" name="description"

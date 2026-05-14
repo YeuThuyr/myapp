@@ -8,6 +8,7 @@ requireLogin();
 require_once __DIR__ . '/includes/db.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    verifyCsrfToken();
     $action = $_POST['action'] ?? '';
     
     $user_id = $_SESSION['user_id'];

@@ -4,12 +4,14 @@
  * URL: /admin/newuser.php
  */
 
+require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/db.php';
 
 $errors  = [];
 $success = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    verifyCsrfToken();
     $username    = trim($_POST['username'] ?? '');
     $fullname    = trim($_POST['fullname'] ?? '');
     $password    = $_POST['password'] ?? '';
@@ -81,6 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <?php endforeach; ?>
 
       <form method="POST" action="">
+        <?php echo getCsrfField(); ?>
         <div class="form-group">
           <label for="username">Username</label>
           <input type="text" id="username" name="username" placeholder="e.g. johndoe" required

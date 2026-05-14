@@ -4,13 +4,7 @@
  * URL: /socialnet/signin.php
  */
 
-if (session_status() === PHP_SESSION_NONE) {
-    // Keep sessions alive for 7 days (604800 seconds)
-    ini_set('session.gc_maxlifetime', 604800);
-    ini_set('session.cookie_lifetime', 604800);
-    session_set_cookie_params(604800);
-    session_start();
-}
+require_once __DIR__ . '/includes/auth.php';
 
 // Already logged in → go home
 if (isset($_SESSION['user_id'])) {
@@ -23,6 +17,7 @@ require_once __DIR__ . '/includes/db.php';
 $error = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    verifyCsrfToken();
     $inputUsername = trim($_POST['username'] ?? '');
     $inputPassword = $_POST['password'] ?? '';
 
@@ -73,6 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <?php endif; ?>
 
       <form method="POST">
+        <?php echo getCsrfField(); ?>
         <div class="form-group">
           <label for="username">Username</label>
           <input type="text" id="username" name="username" placeholder="Enter your username" required

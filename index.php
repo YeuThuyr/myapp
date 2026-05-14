@@ -124,6 +124,7 @@ try {
                         <button class="btn btn-secondary" style="padding:6px 12px; font-size:12px; opacity:0.7; cursor:not-allowed;" disabled>Pending...</button>
                       <?php else: ?>
                         <form method="POST" action="friend_action.php" style="margin:0;">
+                          <?php echo getCsrfField(); ?>
                           <input type="hidden" name="action" value="add">
                           <input type="hidden" name="target_id" value="<?php echo $u['id']; ?>">
                           <button type="submit" class="btn btn-primary" style="padding:6px 12px; font-size:12px;">+ Add Friend</button>
@@ -179,6 +180,7 @@ try {
                     <div style="display:flex; gap:8px; justify-content:flex-end;">
                       <a href="profile.php?owner=<?php echo urlencode($u['username']); ?>" class="btn btn-secondary" style="padding:6px 12px; font-size:12px;">Profile</a>
                       <form method="POST" action="friend_action.php" style="margin:0;">
+                        <?php echo getCsrfField(); ?>
                         <input type="hidden" name="action" value="accept">
                         <input type="hidden" name="sender_id" value="<?php echo $u['id']; ?>">
                         <button type="submit" class="btn btn-accent" style="padding:6px 12px; font-size:12px;">✓ Accept</button>
